@@ -10,7 +10,7 @@ from schedulefree import AdamWScheduleFree
 from torch.utils.data import DataLoader
 import torch
 
-from rift_svc import RF, DiT
+from rift_svc import RF, DiT, LYNXNet
 from rift_svc.dataset import collate_fn, load_svc_dataset
 from rift_svc.lightning_module import RIFTSVCLightningModule
 
@@ -114,12 +114,19 @@ def main(cfg: DictConfig):
         max_frame_len=cfg.dataset.max_frame_len,
         split="test"
     )
-
-    transformer = DiT(
-        **cfg.model.cfg,
-        num_speaker=train_dataset.num_speakers,
-        mel_dim=cfg.dataset.n_mel_channels,
-    )
+    
+    if 'lynxnet' in cfg.model.name:
+        transformer = LYNXNet(
+            **cfg.model.cfg,
+            num_speaker=train_dataset.num_speakers,
+            mel_channels=cfg.dataset.n_mel_channels,
+        )
+    else:
+        transformer = DiT(
+            **cfg.model.cfg,
+            num_speaker=train_dataset.num_speakers,
+            mel_dim=cfg.dataset.n_mel_channels,
+        )
 
     rf = RF(
         transformer=transformer,
