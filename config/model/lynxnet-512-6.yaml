@@ -1,4 +1,4 @@
-name: lynxnet-1024-6
+name: lynxnet-512-6
 cfg:
   num_layers: 6
   num_channels: 512
